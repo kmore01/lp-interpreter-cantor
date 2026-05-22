@@ -1,6 +1,6 @@
 import sys
 import os
-from functions import pi, encode_input, k_1, id, add, mul, diff
+from functions import pi, encode_input, k_1, id, add, mul, diff, fst, snd
 
 builtins = {
     'k_1': k_1,
@@ -8,6 +8,8 @@ builtins = {
     'add': add,
     'mul': mul,
     'diff': diff,
+    'fst': fst,
+    'snd': snd,
 }
 
 # Function to print how to use the program
@@ -56,6 +58,9 @@ def process_file(filepath, processed=None):
         if parts[0] == 'main':
             main_func = parts[1]
 
+        elif parts[0] == 'extended':
+            pass
+
         elif parts[0] == 'import':
             import_name = parts[1]
             import_path = os.path.join(dir_base, import_name + '.cantor')
@@ -73,7 +78,8 @@ def process_file(filepath, processed=None):
                     break
             if i < len(lines):
                 body = lines[i].strip().split()
-                functions[name] = (body[0], body[1], body[2])
+                # Save all the tuple
+                functions[name] = tuple(body)
 
         i += 1
 
@@ -87,12 +93,17 @@ def evaluate(func_name, arg, functions):
     if func_name not in functions:
         print_error(f"Unknown function: {func_name}")
 
-    type, f, g = functions[func_name]
+    args = functions[func_name]
 
-    if type == 'comp':
-        return evaluate(f, evaluate(g, arg, functions), functions)
-    elif type == 'pair':
-        return pi(evaluate(f, arg, functions), evaluate(g, arg, functions))
+    if args[0] == 'comp':
+        return evaluate(args[1], evaluate(args[2], arg, functions), functions)
+    elif args[0] == 'pair':
+        return pi(evaluate(args[1], arg, functions), evaluate(args[2], arg, functions))
+    # compair f g h = comp f (pair g h)
+    elif args[0] == 'compair':
+        return evaluate(args[1], pi(evaluate(args[2], arg, functions), 
+                                    evaluate(args[3], arg, functions)),
+                                    functions)
     else:
         print_error(f"Unknown operation: {type}")
 

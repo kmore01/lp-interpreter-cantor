@@ -47,3 +47,13 @@ def mul(z):
 def diff(z):
     x, y = unpi(z)
     return max(0, x - y)
+
+# Function that given a pair <x, y> returns the first element x
+def fst(z):
+    x, _ = unpi(z)
+    return x
+
+# Function that given a pair <x, y> returns the second element y
+def snd(z):
+    _, y = unpi(z)
+    return y
