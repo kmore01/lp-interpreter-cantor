@@ -104,6 +104,13 @@ def evaluate(func_name, arg, functions):
         return evaluate(args[1], pi(evaluate(args[2], arg, functions), 
                                     evaluate(args[3], arg, functions)),
                                     functions)
+    # mu f = [k | f(<x.k>) != 0 and k is minimal]
+    elif args[0] == 'mu':
+        k = 0
+        while True:
+            if evaluate(args[1], pi(arg, k), functions) != 0:
+                return k
+            k += 1
     else:
         print_error(f"Unknown operation: {type}")
 
