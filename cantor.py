@@ -111,9 +111,27 @@ def evaluate(func_name, arg, functions):
             if evaluate(args[1], pi(arg, k), functions) != 0:
                 return k
             k += 1
+    # primrec f g h: compute s(x) computing s(0)...s(x)
+    elif args[0] == 'primrec':
+        f_pred = args[1] # is_base_case? predicate
+        g_base = args[2] # base_case function
+        h_step = args[3] # recursive_case function
+
+        s_val = evaluate(g_base, 0, functions) # s(0)
+        s_tuple = s_val
+        for i in range(1, arg + 1):
+            # Base case
+            if evaluate(f_pred, i, functions) != 0:
+                s_val = evaluate(g_base, i, functions)
+            # Recursive case
+            else:
+                s_val = evaluate(h_step, pi(s_val, pi(i, 0)), functions)
+            s_tuple = pi(s_val, s_tuple)
+        return s_val # !!!
     else:
         print_error(f"Unknown operation: {type}")
 
+# Main program
 def main():
     if len(sys.argv) < 2:
         usage()
