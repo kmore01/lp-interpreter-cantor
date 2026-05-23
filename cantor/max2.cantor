@@ -1,5 +1,5 @@
 # max2.cantor
-main min2
+main max2
 
 # max2(x,y): si diff(x, y) != 0 (x > y) retorna fst = x, sino snd = y
 define max2
