@@ -1,0 +1,12 @@
+# max2.cantor
+main max2
+
+# max2(x,y): si diff(x, y) != 0 (x > y) retorna fst = x, sino snd = y
+define max2
+    [max via cond]
+    cond diff fst snd
+
+# min2(x,y): si diff(x, y) != 0 (x > y) retorna snd = y, sino fst = x
+define min2
+    [min via cond]
+    cond diff snd fst

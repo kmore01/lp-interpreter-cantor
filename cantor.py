@@ -95,6 +95,12 @@ def evaluate(func_name, arg, functions):
 
     args = functions[func_name]
 
+    if len(args) == 1:
+        if args[0] in builtins:
+            return builtins[args[0]](arg)
+        elif args[0] in functions:
+            return evaluate(args[0], arg, functions)
+
     if args[0] == 'comp':
         return evaluate(args[1], evaluate(args[2], arg, functions), functions)
     elif args[0] == 'pair':
