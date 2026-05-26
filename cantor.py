@@ -134,15 +134,6 @@ def evaluate(func_name, arg, functions):
                 s_val = evaluate(h_step, pi(s_val, pi(i, 0)), functions)
             s_tuple = pi(s_val, s_tuple)
         return s_val # !!!
-    elif args[0] == 'cond':
-    # cond p a b: if p(arg) != 0 then a(arg) else b(arg)
-        p_func = args[1]
-        a_func = args[2]
-        b_func = args[3]
-        if evaluate(p_func, arg, functions) != 0:
-            return evaluate(a_func, arg, functions)
-        else:
-            return evaluate(b_func, arg, functions)
     else:
         print_error(f"Unknown operation: {args[0]}")
 
