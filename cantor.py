@@ -2,6 +2,10 @@ import sys
 import os
 from functions import pi, encode_input, k_1, id, add, mul, diff, fst, snd
 
+from antlr4 import *
+from cantorLexer import cantorLexer
+from cantorParser import cantorParser
+
 builtins = {
     'k_1': k_1,
     'id': id,
@@ -12,17 +16,45 @@ builtins = {
     'snd': snd,
 }
 
-# Function to print how to use the program
 def usage():
     print("Usage: python3 cantor.py <script.cantor>")
     sys.exit(1)
 
-# Function that prints an error message 
 def print_error(message):
     print(message)
     sys.exit(1)
 
-# Function to process files (.cantor) 
+class CantorFunctionCollector(ParseTreeVisitor):
+    def __init__(self):
+        self.functions = {}
+        self.main_func = None
+        self.imports = []
+
+    def visitMain_directive(self, ctx):
+        self.main_func = ctx.ID().getText()
+
+    def visitImport_directive(self, ctx):
+        self.imports.append(ctx.ID().getText())
+
+    def visitFunction_def(self, ctx):
+        name = ctx.ID().getText()
+        op = ctx.operation()
+
+        if isinstance(op, cantorParser.CompOpContext):
+            args = ('comp', op.ID(0).getText(), op.ID(1).getText())
+        elif isinstance(op, cantorParser.PairOpContext):
+            args = ('pair', op.ID(0).getText(), op.ID(1).getText())
+        elif isinstance(op, cantorParser.CompairOpContext):
+            args = ('compair', op.ID(0).getText(), op.ID(1).getText(), op.ID(2).getText())
+        elif isinstance(op, cantorParser.MuOpContext):
+            args = ('mu', op.ID().getText())
+        elif isinstance(op, cantorParser.PrimrecOpContext):
+            args = ('primrec', op.ID(0).getText(), op.ID(1).getText(), op.ID(2).getText())
+        elif isinstance(op, cantorParser.AliasOpContext):
+            args = (op.ID().getText(),)
+
+        self.functions[name] = args
+
 def process_file(filepath, processed=None):
     if processed is None:
         processed = set()
@@ -33,59 +65,30 @@ def process_file(filepath, processed=None):
 
     processed.add(abspath)
 
-    with open(filepath) as f:
-        lines = f.readlines()
+    try:
+        with open(filepath) as f:
+            text = f.read()
 
-    functions = {}
-    main_func = None
+        lexer = cantorLexer(InputStream(text))
+        stream = CommonTokenStream(lexer)
+        parser = cantorParser(stream)
+        tree = parser.prog()
+    except Exception:
+        print_error(f"Error: could not parse {filepath}")
+
+    visitor = CantorFunctionCollector()
+    visitor.visit(tree)
+
     dir_base = os.path.dirname(abspath)
+    all_functions = {}
+    for imp in visitor.imports:
+        import_path = os.path.join(dir_base, imp + '.cantor')
+        imported_funcs, _ = process_file(import_path, processed)
+        all_functions.update(imported_funcs)
 
-    i = 0
-    while i < len(lines):
-        line = lines[i].strip()
+    all_functions.update(visitor.functions)
+    return all_functions, visitor.main_func
 
-        # Skip comments
-        if not line or line.startswith('#') or line.startswith('['):
-            i += 1
-            continue
-        
-        # Separate the line into two words
-        parts = line.split(maxsplit=1)
-        if not parts:
-            i += 1
-            continue
-
-        if parts[0] == 'main':
-            main_func = parts[1]
-
-        elif parts[0] == 'extended':
-            pass
-
-        elif parts[0] == 'import':
-            import_name = parts[1]
-            import_path = os.path.join(dir_base, import_name + '.cantor')
-            imported_funcs, _ = process_file(import_path, processed)
-            functions.update(imported_funcs)
-
-        elif parts[0] == 'define':
-            name = parts[1]
-            i += 1
-            while i < len(lines):
-                line = lines[i].strip()
-                if not line or line.startswith('#') or line.startswith('['):
-                    i += 1
-                else:
-                    break
-            if i < len(lines):
-                body = lines[i].strip().split()
-                # Save all the tuple
-                functions[name] = tuple(body)
-
-        i += 1
-
-    return functions, main_func
-
-# Function to evaluate the inputs
 def evaluate(func_name, arg, functions):
     if func_name in builtins:
         return builtins[func_name](arg)
@@ -105,53 +108,50 @@ def evaluate(func_name, arg, functions):
         return evaluate(args[1], evaluate(args[2], arg, functions), functions)
     elif args[0] == 'pair':
         return pi(evaluate(args[1], arg, functions), evaluate(args[2], arg, functions))
-    # compair f g h = comp f (pair g h)
     elif args[0] == 'compair':
-        return evaluate(args[1], pi(evaluate(args[2], arg, functions), 
+        return evaluate(args[1], pi(evaluate(args[2], arg, functions),
                                     evaluate(args[3], arg, functions)),
                                     functions)
-    # mu f = [k | f(<x.k>) != 0 and k is minimal]
     elif args[0] == 'mu':
         k = 0
         while True:
             if evaluate(args[1], pi(arg, k), functions) != 0:
                 return k
             k += 1
-    # primrec f g h: compute s(x) computing s(0)...s(x)
     elif args[0] == 'primrec':
-        f_pred = args[1] # is_base_case? predicate
-        g_base = args[2] # base_case function
-        h_step = args[3] # recursive_case function
-
-        s_val = evaluate(g_base, 0, functions) # s(0)
+        f_pred = args[1]
+        g_base = args[2]
+        h_step = args[3]
+        
+        s_val = evaluate(g_base, 0, functions)
         s_tuple = s_val
         for i in range(1, arg + 1):
-            # Base case
             if evaluate(f_pred, i, functions) != 0:
                 s_val = evaluate(g_base, i, functions)
-            # Recursive case
             else:
                 s_val = evaluate(h_step, pi(s_val, pi(i, 0)), functions)
             s_tuple = pi(s_val, s_tuple)
-        return s_val # !!!
+        return s_val
     else:
         print_error(f"Unknown operation: {args[0]}")
 
-# Main program
 def main():
     if len(sys.argv) < 2:
         usage()
 
-    script_path = sys.argv[1]
-    functions, main_func = process_file(script_path)
+    try:
+        script_path = sys.argv[1]
+        functions, main_func = process_file(script_path)
 
-    if main_func is None:
-        print_error("Error: no main function defined")
+        if main_func is None:
+            print_error("Error: no main function defined")
 
-    input = sys.stdin.read().strip()
-    arg = encode_input(input)
-    result = evaluate(main_func, arg, functions)
-    print(result)
+        user_input = sys.stdin.read().strip()
+        arg = encode_input(user_input)
+        result = evaluate(main_func, arg, functions)
+        print(result)
+    except Exception as e:
+        print_error(f"Error: {e}")
 
 if __name__ == '__main__':
     main()

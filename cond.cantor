@@ -48,4 +48,3 @@ define aparella_terms
 define cond
     [if p then a else b = signe(p)*a + (1-signe(p))*b]
     comp add aparella_terms
-
