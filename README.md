@@ -142,22 +142,15 @@ The interpreter prints a single natural number — the result of applying the `m
 ```antlr
 grammar cantor;
 
-prog: line* EOF;
+prog: NL* main_directive NL* extended_directive? import_directive* line* EOF;
 
 line
-    : directive
-    | function_def
+    : function_def
     | NL
     ;
 
-directive
-    : main_directive
-    | import_directive
-    | extended_directive
-    ;
-
-main_directive:    'main' ID NL?;
-import_directive:  'import' ID NL?;
+main_directive: 'main' ID NL?;
+import_directive: 'import' ID NL?;
 extended_directive: 'extended' NL?;
 
 function_def: 'define' ID NL? DOC? NL* operation NL?;
@@ -171,12 +164,12 @@ operation
     | ID                  # Alias
     ;
 
-DOC:       '[' ~[\r\n]* ']';
-COMMENT:   '#' ~[\r\n]* -> skip;
-ID:        [a-zA-Z_][a-zA-Z0-9_]*;
-NL:        '\r'? '\n';
-WS:        [ \t]+ -> skip;
-LEXICAL_ERROR: . ;
+DOC: '[' ~[\r\n\]]* ']';
+COMMENT: '#' ~[\r\n]* -> skip;
+ID: [a-zA-Z_][a-zA-Z0-9_]*;
+NL: '\r'? '\n';
+WS: [ \t]+ -> skip;
+LEXICAL_ERROR : . ;
 ```
 
 ### Directives
