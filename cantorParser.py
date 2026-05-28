@@ -593,7 +593,7 @@ class cantorParser ( Parser ):
 
 
 
-    class CompOpContext(OperationContext):
+    class CompairContext(OperationContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
             super().__init__(parser)
@@ -606,21 +606,21 @@ class cantorParser ( Parser ):
                 return self.getToken(cantorParser.ID, i)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCompOp" ):
-                listener.enterCompOp(self)
+            if hasattr( listener, "enterCompair" ):
+                listener.enterCompair(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCompOp" ):
-                listener.exitCompOp(self)
+            if hasattr( listener, "exitCompair" ):
+                listener.exitCompair(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCompOp" ):
-                return visitor.visitCompOp(self)
+            if hasattr( visitor, "visitCompair" ):
+                return visitor.visitCompair(self)
             else:
                 return visitor.visitChildren(self)
 
 
-    class AliasOpContext(OperationContext):
+    class AliasContext(OperationContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
             super().__init__(parser)
@@ -630,102 +630,21 @@ class cantorParser ( Parser ):
             return self.getToken(cantorParser.ID, 0)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterAliasOp" ):
-                listener.enterAliasOp(self)
+            if hasattr( listener, "enterAlias" ):
+                listener.enterAlias(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitAliasOp" ):
-                listener.exitAliasOp(self)
+            if hasattr( listener, "exitAlias" ):
+                listener.exitAlias(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitAliasOp" ):
-                return visitor.visitAliasOp(self)
+            if hasattr( visitor, "visitAlias" ):
+                return visitor.visitAlias(self)
             else:
                 return visitor.visitChildren(self)
 
 
-    class CompairOpContext(OperationContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(cantorParser.ID)
-            else:
-                return self.getToken(cantorParser.ID, i)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCompairOp" ):
-                listener.enterCompairOp(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCompairOp" ):
-                listener.exitCompairOp(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCompairOp" ):
-                return visitor.visitCompairOp(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class PrimrecOpContext(OperationContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(cantorParser.ID)
-            else:
-                return self.getToken(cantorParser.ID, i)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterPrimrecOp" ):
-                listener.enterPrimrecOp(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitPrimrecOp" ):
-                listener.exitPrimrecOp(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitPrimrecOp" ):
-                return visitor.visitPrimrecOp(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class PairOpContext(OperationContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(cantorParser.ID)
-            else:
-                return self.getToken(cantorParser.ID, i)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterPairOp" ):
-                listener.enterPairOp(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitPairOp" ):
-                listener.exitPairOp(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitPairOp" ):
-                return visitor.visitPairOp(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class MuOpContext(OperationContext):
+    class MuContext(OperationContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
             super().__init__(parser)
@@ -735,16 +654,97 @@ class cantorParser ( Parser ):
             return self.getToken(cantorParser.ID, 0)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterMuOp" ):
-                listener.enterMuOp(self)
+            if hasattr( listener, "enterMu" ):
+                listener.enterMu(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitMuOp" ):
-                listener.exitMuOp(self)
+            if hasattr( listener, "exitMu" ):
+                listener.exitMu(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitMuOp" ):
-                return visitor.visitMuOp(self)
+            if hasattr( visitor, "visitMu" ):
+                return visitor.visitMu(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class CompContext(OperationContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(cantorParser.ID)
+            else:
+                return self.getToken(cantorParser.ID, i)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterComp" ):
+                listener.enterComp(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitComp" ):
+                listener.exitComp(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitComp" ):
+                return visitor.visitComp(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class PairContext(OperationContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(cantorParser.ID)
+            else:
+                return self.getToken(cantorParser.ID, i)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterPair" ):
+                listener.enterPair(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitPair" ):
+                listener.exitPair(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPair" ):
+                return visitor.visitPair(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class PrimrecContext(OperationContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a cantorParser.OperationContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(cantorParser.ID)
+            else:
+                return self.getToken(cantorParser.ID, i)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterPrimrec" ):
+                listener.enterPrimrec(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitPrimrec" ):
+                listener.exitPrimrec(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitPrimrec" ):
+                return visitor.visitPrimrec(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -759,7 +759,7 @@ class cantorParser ( Parser ):
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [cantorParser.T__4]:
-                localctx = cantorParser.CompOpContext(self, localctx)
+                localctx = cantorParser.CompContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 66
                 self.match(cantorParser.T__4)
@@ -769,7 +769,7 @@ class cantorParser ( Parser ):
                 self.match(cantorParser.ID)
                 pass
             elif token in [cantorParser.T__5]:
-                localctx = cantorParser.PairOpContext(self, localctx)
+                localctx = cantorParser.PairContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 69
                 self.match(cantorParser.T__5)
@@ -779,7 +779,7 @@ class cantorParser ( Parser ):
                 self.match(cantorParser.ID)
                 pass
             elif token in [cantorParser.T__6]:
-                localctx = cantorParser.CompairOpContext(self, localctx)
+                localctx = cantorParser.CompairContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 72
                 self.match(cantorParser.T__6)
@@ -791,7 +791,7 @@ class cantorParser ( Parser ):
                 self.match(cantorParser.ID)
                 pass
             elif token in [cantorParser.T__7]:
-                localctx = cantorParser.MuOpContext(self, localctx)
+                localctx = cantorParser.MuContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 76
                 self.match(cantorParser.T__7)
@@ -799,7 +799,7 @@ class cantorParser ( Parser ):
                 self.match(cantorParser.ID)
                 pass
             elif token in [cantorParser.T__8]:
-                localctx = cantorParser.PrimrecOpContext(self, localctx)
+                localctx = cantorParser.PrimrecContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
                 self.state = 78
                 self.match(cantorParser.T__8)
@@ -811,7 +811,7 @@ class cantorParser ( Parser ):
                 self.match(cantorParser.ID)
                 pass
             elif token in [cantorParser.ID]:
-                localctx = cantorParser.AliasOpContext(self, localctx)
+                localctx = cantorParser.AliasContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 82
                 self.match(cantorParser.ID)

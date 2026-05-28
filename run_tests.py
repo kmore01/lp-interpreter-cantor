@@ -2,7 +2,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from cantor import evaluate, process_file
+from cantor import EvalVisitor, process_file
 from functions import encode_input
 
 def main():
@@ -40,7 +40,8 @@ def main():
                 print(f'NO_MAIN {base}')
                 continue
             arg = encode_input(inp)
-            result = str(evaluate(main_func, arg, fns))
+            evaluator = EvalVisitor(fns)
+            result = str(evaluator.evaluate(main_func, arg))
         except Exception as e:
             result = f'ERR:{e}'
 

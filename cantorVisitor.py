@@ -44,33 +44,33 @@ class cantorVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#CompOp.
-    def visitCompOp(self, ctx:cantorParser.CompOpContext):
+    # Visit a parse tree produced by cantorParser#Comp.
+    def visitComp(self, ctx:cantorParser.CompContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#PairOp.
-    def visitPairOp(self, ctx:cantorParser.PairOpContext):
+    # Visit a parse tree produced by cantorParser#Pair.
+    def visitPair(self, ctx:cantorParser.PairContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#CompairOp.
-    def visitCompairOp(self, ctx:cantorParser.CompairOpContext):
+    # Visit a parse tree produced by cantorParser#Compair.
+    def visitCompair(self, ctx:cantorParser.CompairContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#MuOp.
-    def visitMuOp(self, ctx:cantorParser.MuOpContext):
+    # Visit a parse tree produced by cantorParser#Mu.
+    def visitMu(self, ctx:cantorParser.MuContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#PrimrecOp.
-    def visitPrimrecOp(self, ctx:cantorParser.PrimrecOpContext):
+    # Visit a parse tree produced by cantorParser#Primrec.
+    def visitPrimrec(self, ctx:cantorParser.PrimrecContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by cantorParser#AliasOp.
-    def visitAliasOp(self, ctx:cantorParser.AliasOpContext):
+    # Visit a parse tree produced by cantorParser#Alias.
+    def visitAlias(self, ctx:cantorParser.AliasContext):
         return self.visitChildren(ctx)
 
 

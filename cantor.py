@@ -5,6 +5,7 @@ from functions import pi, encode_input, k_1, id, add, mul, diff, fst, snd
 from antlr4 import *
 from cantorLexer import cantorLexer
 from cantorParser import cantorParser
+from cantorVisitor import cantorVisitor
 
 builtins = {
     'k_1': k_1,
@@ -24,36 +25,63 @@ def print_error(message):
     print(message)
     sys.exit(1)
 
-class CantorFunctionCollector(ParseTreeVisitor):
-    def __init__(self):
-        self.functions = {}
-        self.main_func = None
-        self.imports = []
+class EvalVisitor(cantorVisitor):
+    def __init__(self, func_defs):
+        self.func_defs = func_defs
+        self.arg = 0
 
-    def visitMain_directive(self, ctx):
-        self.main_func = ctx.ID().getText()
-
-    def visitImport_directive(self, ctx):
-        self.imports.append(ctx.ID().getText())
+    def evaluate(self, func_name, arg):
+        if func_name in builtins:
+            return builtins[func_name](arg)
+        if func_name not in self.func_defs:
+            print_error(f"Unknown function: {func_name}")
+        ctx = self.func_defs[func_name]
+        old_arg = self.arg
+        self.arg = arg
+        result = self.visit(ctx)
+        self.arg = old_arg
+        return result
 
     def visitFunction_def(self, ctx):
-        name = ctx.ID().getText()
-        op = ctx.operation()
+        return self.visit(ctx.operation())
 
-        if isinstance(op, cantorParser.CompOpContext):
-            args = ('comp', op.ID(0).getText(), op.ID(1).getText())
-        elif isinstance(op, cantorParser.PairOpContext):
-            args = ('pair', op.ID(0).getText(), op.ID(1).getText())
-        elif isinstance(op, cantorParser.CompairOpContext):
-            args = ('compair', op.ID(0).getText(), op.ID(1).getText(), op.ID(2).getText())
-        elif isinstance(op, cantorParser.MuOpContext):
-            args = ('mu', op.ID().getText())
-        elif isinstance(op, cantorParser.PrimrecOpContext):
-            args = ('primrec', op.ID(0).getText(), op.ID(1).getText(), op.ID(2).getText())
-        elif isinstance(op, cantorParser.AliasOpContext):
-            args = (op.ID().getText(),)
+    def visitComp(self, ctx):
+        g_val = self.evaluate(ctx.ID(1).getText(), self.arg)
+        return self.evaluate(ctx.ID(0).getText(), g_val)
 
-        self.functions[name] = args
+    def visitPair(self, ctx):
+        f_val = self.evaluate(ctx.ID(0).getText(), self.arg)
+        g_val = self.evaluate(ctx.ID(1).getText(), self.arg)
+        return pi(f_val, g_val)
+
+    def visitCompair(self, ctx):
+        g_val = self.evaluate(ctx.ID(1).getText(), self.arg)
+        h_val = self.evaluate(ctx.ID(2).getText(), self.arg)
+        return self.evaluate(ctx.ID(0).getText(), pi(g_val, h_val))
+
+    def visitMu(self, ctx):
+        f_name = ctx.ID().getText()
+        k = 0
+        while True:
+            if self.evaluate(f_name, pi(self.arg, k)) != 0:
+                return k
+            k += 1
+
+    def visitPrimrec(self, ctx):
+        f_pred = ctx.ID(0).getText()
+        g_base = ctx.ID(1).getText()
+        h_step = ctx.ID(2).getText()
+
+        s_val = self.evaluate(g_base, 0)
+        for i in range(1, self.arg + 1):
+            if self.evaluate(f_pred, i) != 0:
+                s_val = self.evaluate(g_base, i)
+            else:
+                s_val = self.evaluate(h_step, pi(s_val, pi(i, 0)))
+        return s_val
+
+    def visitAlias(self, ctx):
+        return self.evaluate(ctx.ID().getText(), self.arg)
 
 def process_file(filepath, processed=None):
     if processed is None:
@@ -76,64 +104,28 @@ def process_file(filepath, processed=None):
     except Exception:
         print_error(f"Error: could not parse {filepath}")
 
-    visitor = CantorFunctionCollector()
-    visitor.visit(tree)
-
+    func_defs = {}
+    main_func = None
     dir_base = os.path.dirname(abspath)
-    all_functions = {}
-    for imp in visitor.imports:
-        import_path = os.path.join(dir_base, imp + '.cantor')
-        imported_funcs, _ = process_file(import_path, processed)
-        all_functions.update(imported_funcs)
 
-    all_functions.update(visitor.functions)
-    return all_functions, visitor.main_func
+    for line in tree.line():
+        d = line.directive()
+        if d is not None:
+            md = d.main_directive()
+            if md is not None:
+                main_func = md.ID().getText()
+            id_ = d.import_directive()
+            if id_ is not None:
+                imp = id_.ID().getText()
+                import_path = os.path.join(dir_base, imp + '.cantor')
+                imported_defs, _ = process_file(import_path, processed)
+                func_defs.update(imported_defs)
+        fd = line.function_def()
+        if fd is not None:
+            name = fd.ID().getText()
+            func_defs[name] = fd
 
-def evaluate(func_name, arg, functions):
-    if func_name in builtins:
-        return builtins[func_name](arg)
-
-    if func_name not in functions:
-        print_error(f"Unknown function: {func_name}")
-
-    args = functions[func_name]
-
-    if len(args) == 1:
-        if args[0] in builtins:
-            return builtins[args[0]](arg)
-        elif args[0] in functions:
-            return evaluate(args[0], arg, functions)
-
-    if args[0] == 'comp':
-        return evaluate(args[1], evaluate(args[2], arg, functions), functions)
-    elif args[0] == 'pair':
-        return pi(evaluate(args[1], arg, functions), evaluate(args[2], arg, functions))
-    elif args[0] == 'compair':
-        return evaluate(args[1], pi(evaluate(args[2], arg, functions),
-                                    evaluate(args[3], arg, functions)),
-                                    functions)
-    elif args[0] == 'mu':
-        k = 0
-        while True:
-            if evaluate(args[1], pi(arg, k), functions) != 0:
-                return k
-            k += 1
-    elif args[0] == 'primrec':
-        f_pred = args[1]
-        g_base = args[2]
-        h_step = args[3]
-        
-        s_val = evaluate(g_base, 0, functions)
-        s_tuple = s_val
-        for i in range(1, arg + 1):
-            if evaluate(f_pred, i, functions) != 0:
-                s_val = evaluate(g_base, i, functions)
-            else:
-                s_val = evaluate(h_step, pi(s_val, pi(i, 0)), functions)
-            s_tuple = pi(s_val, s_tuple)
-        return s_val
-    else:
-        print_error(f"Unknown operation: {args[0]}")
+    return func_defs, main_func
 
 def main():
     if len(sys.argv) < 2:
@@ -141,14 +133,15 @@ def main():
 
     try:
         script_path = sys.argv[1]
-        functions, main_func = process_file(script_path)
+        func_defs, main_func = process_file(script_path)
 
         if main_func is None:
             print_error("Error: no main function defined")
 
         user_input = sys.stdin.read().strip()
         arg = encode_input(user_input)
-        result = evaluate(main_func, arg, functions)
+        evaluator = EvalVisitor(func_defs)
+        result = evaluator.evaluate(main_func, arg)
         print(result)
     except Exception as e:
         print_error(f"Error: {e}")

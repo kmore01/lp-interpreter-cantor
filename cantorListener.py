@@ -71,57 +71,57 @@ class cantorListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by cantorParser#CompOp.
-    def enterCompOp(self, ctx:cantorParser.CompOpContext):
+    # Enter a parse tree produced by cantorParser#Comp.
+    def enterComp(self, ctx:cantorParser.CompContext):
         pass
 
-    # Exit a parse tree produced by cantorParser#CompOp.
-    def exitCompOp(self, ctx:cantorParser.CompOpContext):
-        pass
-
-
-    # Enter a parse tree produced by cantorParser#PairOp.
-    def enterPairOp(self, ctx:cantorParser.PairOpContext):
-        pass
-
-    # Exit a parse tree produced by cantorParser#PairOp.
-    def exitPairOp(self, ctx:cantorParser.PairOpContext):
+    # Exit a parse tree produced by cantorParser#Comp.
+    def exitComp(self, ctx:cantorParser.CompContext):
         pass
 
 
-    # Enter a parse tree produced by cantorParser#CompairOp.
-    def enterCompairOp(self, ctx:cantorParser.CompairOpContext):
+    # Enter a parse tree produced by cantorParser#Pair.
+    def enterPair(self, ctx:cantorParser.PairContext):
         pass
 
-    # Exit a parse tree produced by cantorParser#CompairOp.
-    def exitCompairOp(self, ctx:cantorParser.CompairOpContext):
-        pass
-
-
-    # Enter a parse tree produced by cantorParser#MuOp.
-    def enterMuOp(self, ctx:cantorParser.MuOpContext):
-        pass
-
-    # Exit a parse tree produced by cantorParser#MuOp.
-    def exitMuOp(self, ctx:cantorParser.MuOpContext):
+    # Exit a parse tree produced by cantorParser#Pair.
+    def exitPair(self, ctx:cantorParser.PairContext):
         pass
 
 
-    # Enter a parse tree produced by cantorParser#PrimrecOp.
-    def enterPrimrecOp(self, ctx:cantorParser.PrimrecOpContext):
+    # Enter a parse tree produced by cantorParser#Compair.
+    def enterCompair(self, ctx:cantorParser.CompairContext):
         pass
 
-    # Exit a parse tree produced by cantorParser#PrimrecOp.
-    def exitPrimrecOp(self, ctx:cantorParser.PrimrecOpContext):
+    # Exit a parse tree produced by cantorParser#Compair.
+    def exitCompair(self, ctx:cantorParser.CompairContext):
         pass
 
 
-    # Enter a parse tree produced by cantorParser#AliasOp.
-    def enterAliasOp(self, ctx:cantorParser.AliasOpContext):
+    # Enter a parse tree produced by cantorParser#Mu.
+    def enterMu(self, ctx:cantorParser.MuContext):
         pass
 
-    # Exit a parse tree produced by cantorParser#AliasOp.
-    def exitAliasOp(self, ctx:cantorParser.AliasOpContext):
+    # Exit a parse tree produced by cantorParser#Mu.
+    def exitMu(self, ctx:cantorParser.MuContext):
+        pass
+
+
+    # Enter a parse tree produced by cantorParser#Primrec.
+    def enterPrimrec(self, ctx:cantorParser.PrimrecContext):
+        pass
+
+    # Exit a parse tree produced by cantorParser#Primrec.
+    def exitPrimrec(self, ctx:cantorParser.PrimrecContext):
+        pass
+
+
+    # Enter a parse tree produced by cantorParser#Alias.
+    def enterAlias(self, ctx:cantorParser.AliasContext):
+        pass
+
+    # Exit a parse tree produced by cantorParser#Alias.
+    def exitAlias(self, ctx:cantorParser.AliasContext):
         pass
 
 

@@ -21,12 +21,12 @@ extended_directive: 'extended' NL?;
 function_def: 'define' ID NL? DOC? NL* operation NL?;
 
 operation
-    : 'comp' ID ID        # CompOp
-    | 'pair' ID ID        # PairOp
-    | 'compair' ID ID ID  # CompairOp
-    | 'mu' ID             # MuOp
-    | 'primrec' ID ID ID  # PrimrecOp
-    | ID                  # AliasOp
+    : 'comp' ID ID        # Comp
+    | 'pair' ID ID        # Pair
+    | 'compair' ID ID ID  # Compair
+    | 'mu' ID             # Mu
+    | 'primrec' ID ID ID  # Primrec
+    | ID                  # Alias
     ;
 
 DOC: '[' ~[\r\n]* ']';
