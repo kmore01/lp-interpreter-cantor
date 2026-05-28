@@ -1,6 +1,6 @@
 import sys
 import os
-from functions import pi, encode_input, k_1, id, add, mul, diff, fst, snd
+from functions import *
 
 from antlr4 import *
 from cantorLexer import cantorLexer
@@ -41,9 +41,6 @@ class EvalVisitor(cantorVisitor):
         result = self.visit(ctx)
         self.arg = old_arg
         return result
-
-    def visitFunction_def(self, ctx):
-        return self.visit(ctx.operation())
 
     def visitComp(self, ctx):
         g_val = self.evaluate(ctx.ID(1).getText(), self.arg)
@@ -94,20 +91,25 @@ def process_file(filepath, processed=None):
     processed.add(abspath)
 
     try:
-        with open(filepath) as f:
-            text = f.read()
-
-        lexer = cantorLexer(InputStream(text))
-        stream = CommonTokenStream(lexer)
-        parser = cantorParser(stream)
+        input_stream = FileStream(filepath, encoding='utf-8')
+        lexer = cantorLexer(input_stream)
+        lexer.removeErrorListeners()
+        token_stream = CommonTokenStream(lexer)
+        parser = cantorParser(token_stream)
         tree = parser.prog()
-    except Exception:
-        print_error(f"Error: could not parse {filepath}")
+
+        num_errors = parser.getNumberOfSyntaxErrors()
+        if num_errors > 0:
+            print_error(f"Error: There are {num_errors} sintax errors on the file '{filepath}'.")
+
+    except Exception as e:
+        print_error(f"Error: {e} in {filepath}")
 
     func_defs = {}
     main_func = None
     dir_base = os.path.dirname(abspath)
 
+    # Get name of functions
     for line in tree.line():
         d = line.directive()
         if d is not None:
@@ -123,7 +125,7 @@ def process_file(filepath, processed=None):
         fd = line.function_def()
         if fd is not None:
             name = fd.ID().getText()
-            func_defs[name] = fd
+            func_defs[name] = fd.operation()
 
     return func_defs, main_func
 

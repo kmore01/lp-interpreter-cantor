@@ -34,3 +34,4 @@ COMMENT: '#' ~[\r\n]* -> skip;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NL: '\r'? '\n';
 WS: [ \t]+ -> skip;
+LEXICAL_ERROR : . ;
