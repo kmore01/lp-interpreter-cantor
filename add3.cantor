@@ -16,4 +16,4 @@ define add23
 
 define add3
     [Suma de seqüència de tres elements]
-    compair dd fst add23
+    compair add fst add23
