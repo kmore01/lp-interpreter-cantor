@@ -1,9 +1,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cantor import EvalVisitor, process_file
 from functions import encode_input
+
 
 def main():
     tests_dir = 'tests'
@@ -15,7 +15,7 @@ def main():
             continue
 
         base = fname[:-4]
-        script_name = base.rsplit('_', 1)[0] + '.cantor'
+        script_name = 'cantor/' + base.rsplit('_', 1)[0] + '.cantor'
         inp_file = os.path.join(tests_dir, fname)
         out_file = os.path.join(tests_dir, base + '.out')
 
@@ -58,6 +58,7 @@ def main():
         print(f'Failed ({len(failed)}): {", ".join(failed)}')
         return 1
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -1,0 +1,62 @@
+# even.cantor
+main even
+import mod
+
+define k_0
+    [0]
+    compair diff k_1 k_1
+
+define k_2
+    [2]
+    compair add k_1 k_1
+
+define ant
+    [max(0, x-1)]
+    compair diff id k_1
+
+define signe
+    [0 si x=0, 1 altrament]
+    compair diff id ant
+
+define not
+    [1 - x]
+    compair diff k_1 id
+
+define swap
+    [<x.y> -> <y.x>]
+    pair snd fst
+
+define diff_swap
+    [diff(y - x)]
+    comp diff swap
+
+define aparella_diff
+    [<diff(x-y).diff(y-x)>]
+    pair diff diff_swap
+
+define suma_diff
+    [|x - y| = diff(x-y) + diff(y-x)]
+    comp add aparella_diff
+
+define neq
+    [1 si x != y, 0 altrament]
+    comp signe suma_diff
+
+define eq
+    [1 si x == y, 0 altrament]
+    comp not neq
+
+# x_2(x) = <x. 2>
+define x_2
+    [<x. 2>]
+    pair id k_2
+
+# mod2(x) = mod(x_2(x)) = x mod 2
+define mod2
+    [x mod 2]
+    comp mod x_2
+
+# even(x) = eq(mod2(x), 0) = 1 si x parell, 0 altrament
+define even
+    [1 si x parell, 0 altrament]
+    compair eq mod2 k_0

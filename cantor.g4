@@ -1,17 +1,10 @@
 grammar cantor;
 
-prog: line* EOF;
+prog: NL* main_directive NL* extended_directive? import_directive* line* EOF;
 
 line
-    : directive
-    | function_def
+    : function_def
     | NL
-    ;
-
-directive
-    : main_directive
-    | import_directive
-    | extended_directive
     ;
 
 main_directive: 'main' ID NL?;
@@ -29,7 +22,7 @@ operation
     | ID                  # Alias
     ;
 
-DOC: '[' ~[\r\n]* ']';
+DOC: '[' ~[\r\n\]]* ']';
 COMMENT: '#' ~[\r\n]* -> skip;
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 NL: '\r'? '\n';

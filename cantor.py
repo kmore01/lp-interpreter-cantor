@@ -17,13 +17,16 @@ builtins = {
     'snd': snd,
 }
 
+
 def usage():
     print("Usage: python3 cantor.py <script.cantor>")
     sys.exit(1)
 
+
 def print_error(message):
     print(message)
     sys.exit(1)
+
 
 class EvalVisitor(cantorVisitor):
     def __init__(self, func_defs):
@@ -80,6 +83,7 @@ class EvalVisitor(cantorVisitor):
     def visitAlias(self, ctx):
         return self.evaluate(ctx.ID().getText(), self.arg)
 
+
 def process_file(filepath, processed=None):
     if processed is None:
         processed = set()
@@ -109,25 +113,27 @@ def process_file(filepath, processed=None):
     main_func = None
     dir_base = os.path.dirname(abspath)
 
-    # Get name of functions
+    # Get main directive
+    md = tree.main_directive()
+    if md is not None:
+        main_func = md.ID().getText()
+
+    # Get import directives
+    for id_ in tree.import_directive():
+        imp = id_.ID().getText()
+        import_path = os.path.join(dir_base, imp + '.cantor')
+        imported_defs, _ = process_file(import_path, processed)
+        func_defs.update(imported_defs)
+
+    # Get function definitions from lines
     for line in tree.line():
-        d = line.directive()
-        if d is not None:
-            md = d.main_directive()
-            if md is not None:
-                main_func = md.ID().getText()
-            id_ = d.import_directive()
-            if id_ is not None:
-                imp = id_.ID().getText()
-                import_path = os.path.join(dir_base, imp + '.cantor')
-                imported_defs, _ = process_file(import_path, processed)
-                func_defs.update(imported_defs)
         fd = line.function_def()
         if fd is not None:
             name = fd.ID().getText()
             func_defs[name] = fd.operation()
 
     return func_defs, main_func
+
 
 def main():
     if len(sys.argv) < 2:
@@ -147,6 +153,7 @@ def main():
         print(result)
     except Exception as e:
         print_error(f"Error: {e}")
+
 
 if __name__ == '__main__':
     main()

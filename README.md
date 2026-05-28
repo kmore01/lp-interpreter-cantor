@@ -1,25 +1,34 @@
 # Cantor Interpreter
 
-An interpreter for the **Cantor** language, a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory**. Built for the *Programming Languages* course at Universitat de Barcelona.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![ANTLR 4.9](https://img.shields.io/badge/ANTLR-4.9-red.svg)](https://www.antlr.org/)
+[![License: Educational](https://img.shields.io/badge/license-educational-green.svg)](LICENSE)
 
-## Description
+An interpreter for the **Cantor** language — a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat de Barcelona**.
 
-Cantor is a tiny language where all data is encoded as natural numbers using the **Cantor pairing function**. Lists and tuples are represented via nested pairs, and the empty list is represented as `0`. Programs define recursive functions using a small set of combinators:
+In Cantor, **all data is encoded as natural numbers**. Lists and tuples are represented via nested Cantor pairs, and the empty list is `0`. Programs define recursive functions using a small set of combinators inspired by Kleene's formalism of recursive functions.
 
-- **`comp`** — function composition
-- **`pair`** — pairing two functions
-- **`compair`** — compose with pair (shortcut for `comp f (pair g h)`)
-- **`mu`** — minimalization (µ-recursion)
-- **`primrec`** — primitive recursion
+---
 
-Scripts have a `.cantor` extension, read input from stdin, and write the result to stdout.
+## Features
+
+- **Tiny combinator-based language** — only 5 operation forms (`comp`, `pair`, `compair`, `mu`, `primrec`)
+- **Cantor pairing** — all data structures encoded as single natural numbers
+- **µ-recursion** — full expressive power of general recursive functions
+- **Import system** — compose programs by importing other `.cantor` files
+- **Documentation comments** — inline `[docs]` on function definitions
+- **Test runner** — automated black-box testing from `.inp` / `.out` files
+- **ANTLR-based parsing** — clean, maintainable grammar-driven frontend
+
+---
 
 ## Requirements
 
-- **Python 3.10+**
-- **ANTLR 4.9.2** (for grammar-based parsing)
-  - Java runtime (for the ANTLR tool)
-  - Python runtime: `antlr4-python3-runtime`
+| Dependency | Version | Purpose |
+|---|---|---|
+| Python | 3.10+ | Runtime |
+| ANTLR tool | 4.9.x | Grammar compilation (`antlr4`) |
+| antlr4-python3-runtime | matching 4.9.x | Python runtime library |
 
 ### Installing ANTLR
 
@@ -30,132 +39,199 @@ sudo apt install antlr4
 pip install antlr4-python3-runtime
 ```
 
-**Other systems:**
+**macOS (Homebrew):**
+
+```bash
+brew install antlr
+pip install antlr4-python3-runtime
+```
+
+**Other systems (via pip):**
 
 ```bash
 pip install antlr4-tools antlr4-python3-runtime
 ```
 
-## Setup
+> **Note:** The ANTLR tool requires a **Java runtime** (JRE 8+). Install it with `sudo apt install default-jre` on Debian-based systems or `brew install openjdk` on macOS.
 
-Clone the repository and generate the ANTLR parser:
+---
+
+## Setup
 
 ```bash
 git clone <repo-url>
-cd lp
+cd cantor
 make
 ```
 
-This runs `antlr4 -Dlanguage=Python3 -visitor cantor.g4` and produces `cantorLexer.py`, `cantorParser.py`, and `cantorVisitor.py`.
+This runs `antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4`, generating:
+
+- `cantorLexer.py` — lexer
+- `cantorParser.py` — parser
+- `cantorVisitor.py` — AST visitor
+
+---
 
 ## Usage
 
 Run any `.cantor` script by passing input through stdin:
 
 ```bash
-echo "3 5" | python3 cantor.py suma.cantor
+echo "3 5" | python3 cantor.py cantor/suma.cantor
 # Output: 8
 ```
 
 ```bash
-echo "5" | python3 cantor.py factorial.cantor
+echo "5" | python3 cantor.py cantor/factorial.cantor
 # Output: 120
 ```
 
 ```bash
-echo "7 2" | python3 cantor.py mod.cantor
+echo "7 2" | python3 cantor.py cantor/mod.cantor
 # Output: 1
+```
+
+```bash
+echo "10" | python3 cantor.py cantor/fibonacci.cantor
+# Output: 55
 ```
 
 ### Input Format
 
-Input numbers are space-separated on a single line. They are encoded as nested Cantor pairs:
+Input numbers are space-separated on a single line. They are encoded as nested Cantor pairs from right to left:
 
 ```
 a b c   →   π(a, π(b, c))
 ```
 
+Where `π(x, y) = ((x + y)(x + y + 1))/2 + y` is the Cantor pairing function.
+
+A single number `x` is passed directly as `x`.
+
 ### Output
 
 The interpreter prints a single natural number — the result of applying the `main` function to the encoded input.
+
+---
 
 ## Scripts
 
 | Script | Function | Input | Output |
 |---|---|---|---|
 | `suma.cantor` | `x + y` | `x y` | sum |
-| `anterior.cantor` | `max(0, x-1)` | `x` | predecessor |
-| `signe.cantor` | `0 if x=0, 1 otherwise` | `x` | sign |
-| `booleans.cantor` | boolean operations | `op x y` | result |
-| `relacionals.cantor` | relational operators | `op x y` | 0/1 |
+| `anterior.cantor` | `max(0, x - 1)` | `x` | predecessor |
+| `signe.cantor` | `0 if x = 0, 1 otherwise` | `x` | sign |
+| `booleans.cantor` | boolean operations (not, and, or) | `op x y` | result |
+| `relacionals.cantor` | relational operators (eq, lt, le, gt, ge) | `op x y` | 0 / 1 |
 | `add3.cantor` | `x + y + z` | `x y z` | sum |
 | `factorial.cantor` | `x!` | `x` | factorial |
 | `fibonacci.cantor` | `F(x)` | `x` | Fibonacci number |
 | `div.cantor` | `x // y` | `x y` | quotient |
 | `mod.cantor` | `x mod y` | `x y` | remainder |
 | `cond.cantor` | conditional `if p then a else b` | `p a b` | a or b |
-| `max2.cantor` | `max(x, y)` / `min(x, y)` | `x y` | max/min |
-| `maxMin.cantor` | `max` / `min` of three numbers | `x y z` | max/min |
+| `max2.cantor` | `max(x, y)` / `min(x, y)` | `x y` | max or min |
+| `maxMin.cantor` | `max` / `min` of three numbers | `x y z` | max or min |
 | `even.cantor` | `1 if x even, 0 otherwise` | `x` | evenness |
+
+---
 
 ## Language Reference
 
 ### Grammar
 
 ```antlr
+grammar cantor;
+
 prog: line* EOF;
 
 line
     : directive
     | function_def
+    | NL
     ;
 
 directive
-    : 'main' ID
-    | 'import' ID
-    | 'extended'
+    : main_directive
+    | import_directive
+    | extended_directive
     ;
 
-function_def: 'define' ID DOC? operation;
+main_directive:    'main' ID NL?;
+import_directive:  'import' ID NL?;
+extended_directive: 'extended' NL?;
+
+function_def: 'define' ID NL? DOC? NL* operation NL?;
 
 operation
-    : 'comp' ID ID          # CompOp
-    | 'pair' ID ID          # PairOp
-    | 'compair' ID ID ID    # CompairOp
-    | 'mu' ID               # MuOp
-    | 'primrec' ID ID ID    # PrimrecOp
-    | ID                    # AliasOp
+    : 'comp' ID ID        # Comp
+    | 'pair' ID ID        # Pair
+    | 'compair' ID ID ID  # Compair
+    | 'mu' ID             # Mu
+    | 'primrec' ID ID ID  # Primrec
+    | ID                  # Alias
     ;
+
+DOC:       '[' ~[\r\n]* ']';
+COMMENT:   '#' ~[\r\n]* -> skip;
+ID:        [a-zA-Z_][a-zA-Z0-9_]*;
+NL:        '\r'? '\n';
+WS:        [ \t]+ -> skip;
+LEXICAL_ERROR: . ;
 ```
 
 ### Directives
 
-- **`main <name>`** — declares the entry point function
-- **`import <name>`** — imports all functions from another `.cantor` file
-- **`extended`** — enables extended mode (reserved)
+| Directive | Description |
+|---|---|
+| `main <name>` | Declares the entry-point function |
+| `import <name>` | Imports all functions from another `.cantor` file (resolved relative to current file) |
+| `extended` | Enables extended mode (needed for `relacionals.cantor`, `booleans.cantor`, `cond.cantor`, etc.) |
 
 ### Operations
 
-| Operation | Meaning |
-|---|---|
-| `comp f g` | `f ∘ g` : `f(g(x))` |
-| `pair f g` | `⟨f(x), g(x)⟩` |
-| `compair f g h` | `f(⟨g(x), h(x)⟩)` (equiv. `comp f (pair g h)`) |
-| `mu f` | minimal `k` such that `f(⟨x, k⟩) ≠ 0` |
-| `primrec f g h` | primitive recursion |
-| `<name>` | alias (single-function body) |
+| Form | Meaning | Mathematical equivalent |
+|---|---|---|
+| `comp f g` | Composition: `f(g(x))` | `f ∘ g` |
+| `pair f g` | Pairing: `⟨f(x), g(x)⟩` | `⟨f, g⟩` |
+| `compair f g h` | Compose with pair: `f(⟨g(x), h(x)⟩)` | `f ∘ ⟨g, h⟩` |
+| `mu f` | µ-recursion (minimalization): smallest `k` such that `f(⟨x, k⟩) ≠ 0` | `µk.f(⟨x, k⟩) ≠ 0` |
+| `primrec f g h` | Primitive recursion | `base = g(x)`, `step = h(⟨acc, x⟩)` |
+| `<name>` | Alias: single-function body | — |
 
 ### Built-in Functions
 
-| Name | Function |
-|---|---|
-| `k_1` | constant 1: `k_1(x) = 1` |
-| `id` | identity: `id(x) = x` |
-| `add` | addition: `add(⟨x, y⟩) = x + y` |
-| `mul` | multiplication: `mul(⟨x, y⟩) = x * y` |
-| `diff` | truncated difference: `diff(⟨x, y⟩) = max(0, x - y)` |
-| `fst` | first projection: `fst(⟨x, y⟩) = x` |
-| `snd` | second projection: `snd(⟨x, y⟩) = y` |
+| Name | Signature | Description |
+|---|---|---|
+| `k_1` | `k_1(x) = 1` | Constant 1 |
+| `id` | `id(x) = x` | Identity |
+| `add` | `add(⟨x, y⟩) = x + y` | Addition |
+| `mul` | `mul(⟨x, y⟩) = x * y` | Multiplication |
+| `diff` | `diff(⟨x, y⟩) = max(0, x - y)` | Truncated difference |
+| `fst` | `fst(⟨x, y⟩) = x` | First projection |
+| `snd` | `snd(⟨x, y⟩) = y` | Second projection |
+
+### Primitive Recursion Semantics
+
+The `primrec f g h` operation works as follows:
+
+1. If `f(i) ≠ 0` (base case): result = `g(i)`
+2. If `f(i) = 0` (recursive case): result = `h(⟨accumulator, i⟩)`
+
+The accumulator is the result from the previous step (`i - 1`), starting with `g(0)`.
+
+### Documentation Comments
+
+Function definitions can include documentation comments in square brackets:
+
+```cantor
+define factorial
+    [x!]
+    primrec is_base k_1 step
+```
+
+These are ignored by the interpreter but serve as inline documentation.
+
+---
 
 ## Running Tests
 
@@ -163,25 +239,135 @@ operation
 python3 run_tests.py
 ```
 
-This runs all test cases from the `tests/` directory. Each test consists of an `.inp` file (input) and a corresponding `.out` file (expected output).
+This runs all test cases from the `tests/` directory. Each test consists of:
+
+- `.inp` file — space-separated input numbers
+- `.out` file — expected output (single natural number)
+- A matching `.cantor` script in `cantor/` named after the test prefix (e.g., `suma_1.inp` → `cantor/suma.cantor`)
+
+Example output:
+
+```
+  OK  suma_1
+  OK  suma_2
+  OK  factorial_1
+  OK  fibonacci_1
+  OK  cond_2
+FAIL  div_1: got "3", expected "2"
+
+5/6 tests passed
+```
+
+---
 
 ## Project Structure
 
 ```
-├── cantor.py          # Main interpreter
-├── functions.py       # Pairing functions and built-ins
-├── cantor.g4          # ANTLR grammar
-├── cantorLexer.py     # Generated lexer
-├── cantorParser.py    # Generated parser
-├── cantorVisitor.py   # Generated visitor
-├── Makefile           # ANTLR generation
-├── run_tests.py       # Test runner
-├── *.cantor           # Language scripts
-└── tests/
-    ├── *.inp          # Test inputs
-    ├── *.out          # Expected outputs
-    └── *.cantor       # Self-contained test scripts
+├── cantor.py              # Main interpreter (EvalVisitor, file processor, CLI)
+├── functions.py           # Cantor pairing functions and built-in operations
+├── cantor.g4              # ANTLR grammar definition
+├── cantorLexer.py         # Generated lexer (from grammar)
+├── cantorParser.py        # Generated parser (from grammar)
+├── cantorVisitor.py       # Generated visitor skeleton (from grammar)
+├── Makefile               # ANTLR grammar compilation
+├── run_tests.py           # Automated test runner
+├── .gitignore             # Git ignore rules
+├── README.md              # This file
+├── cantor/                # Cantor language scripts
+│   ├── suma.cantor        #   Addition
+│   ├── factorial.cantor   #   Factorial
+│   ├── fibonacci.cantor   #   Fibonacci
+│   ├── mod.cantor         #   Modulo
+│   ├── div.cantor         #   Division
+│   ├── cond.cantor        #   Conditional
+│   ├── booleans.cantor    #   Boolean operations
+│   ├── relacionals.cantor #   Relational operators
+│   ├── signe.cantor       #   Sign function
+│   ├── anterior.cantor    #   Predecessor
+│   ├── even.cantor        #   Evenness test
+│   ├── add3.cantor        #   Three-number addition
+│   ├── max2.cantor        #   Max / min of two numbers
+│   └── maxMin.cantor      #   Max / min of three numbers
+└── tests/                 # Test inputs and expected outputs
+    ├── suma_1.inp
+    ├── suma_1.out
+    ├── factorial_1.inp
+    ├── factorial_1.out
+    └── ...
 ```
+
+---
+
+## How It Works
+
+### Cantor Pairing Function
+
+The Cantor pairing function `π : ℕ × ℕ → ℕ` is a bijection that encodes any pair of natural numbers as a single natural number:
+
+```
+π(x, y) = ((x + y)(x + y + 1)) / 2 + y
+```
+
+Its inverse `π⁻¹(z) = (x, y)` reconstructs the original pair. By nesting `π`, any tuple `(a₁, a₂, ..., aₙ)` can be encoded as a single number: `π(a₁, π(a₂, ... π(aₙ₋₁, aₙ)...))`.
+
+### Evaluation Model
+
+1. The ANTLR-generated parser reads a `.cantor` file and produces an AST
+2. `process_file()` resolves `import` directives recursively and builds a mapping of function names to their AST nodes
+3. `EvalVisitor` evaluates the `main` function against the encoded input:
+   - **`comp f g`** — evaluates `g(x)`, passes result to `f`
+   - **`pair f g`** — evaluates `f(x)` and `g(x)`, encodes the pair via `π`
+   - **`compair f g h`** — evaluates `g(x)` and `h(x)`, pairs them, passes to `f`
+   - **`mu f`** — iterates `k = 0, 1, 2, ...` until `f(⟨x, k⟩) ≠ 0`
+   - **`primrec f g h`** — iterates from `1` to `x`, applying base/step logic
+
+---
+
+## FAQ
+
+### Why is everything encoded as numbers?
+
+Cantor is a pedagogical language designed to illustrate the **Church-Turing thesis** and the theory of **μ-recursive functions**. By encoding all data as natural numbers, it shows that integer arithmetic alone is sufficient for any computation — no native lists, booleans, or strings are needed.
+
+### What is µ-recursion (minimalization)?
+
+The `mu` operator finds the smallest natural number `k` such that a given function returns a non-zero value. Combined with composition, pairing, and primitive recursion, this gives the full power of general recursive functions (equivalent to Turing machines).
+
+### Why do some scripts need `extended`?
+
+The `extended` directive enables scripts that use `mu` (µ-recursion), which goes beyond primitive recursion. Scripts marked `extended` can define functions like division, modulo, and the conditional that require unbounded search.
+
+### Can I use Cantor for real-world programming?
+
+No. Cantor is a **teaching language** — it's intentionally minimal to demonstrate fundamental concepts in computability theory. It is not designed for practical software development.
+
+---
+
+## Contributing
+
+This is an educational project for the Programming Languages course at Universitat de Barcelona. Contributions are welcome:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please make sure to run the test suite before submitting:
+
+```bash
+python3 run_tests.py
+```
+
+All tests must pass and new features should include corresponding test cases.
+
+### Adding a new script
+
+1. Create your `.cantor` file in the `cantor/` directory
+2. Define a `main` function via the `main` directive
+3. Add test cases in `tests/` with matching `<name>_<n>.inp` and `<name>_<n>.out` files
+
+---
 
 ## Authors
 
@@ -189,6 +375,16 @@ This runs all test cases from the `tests/` directory. Each test consists of an `
 
 Built for the *Programming Languages* course (2025–2026) at **Universitat de Barcelona**.
 
+---
+
 ## License
 
-This project is for educational purposes. No license specified.
+This project is for **educational purposes**. No license specified.
+
+---
+
+## Acknowledgments
+
+- Inspired by Kleene's theory of **μ-recursive functions** and the formalism of **recursive function theory**
+- Built with [ANTLR](https://www.antlr.org/) parser generator
+- README structure inspired by [Make a README](https://www.makeareadme.com/)

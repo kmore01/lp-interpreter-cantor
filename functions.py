@@ -4,13 +4,15 @@ import math
 def pi(x, y):
     return (x + y) * (x + y + 1) // 2 + y
 
+
 # Inverse of the Cantor function
 def unpi(z):
-    w = math.floor((math.sqrt(8 * z + 1) - 1) / 2)
+    w = int((math.sqrt(8 * z + 1) - 1) // 2)
     t = (w * w + w) // 2
     y = z - t
     x = w - y
     return x, y
+
 
 # Function for encoding inputs
 def encode_input(entrada):
@@ -25,33 +27,40 @@ def encode_input(entrada):
         result = pi(num, result)
     return result
 
+
 # Constant function 1
 def k_1(z):
     return 1
 
+
 # Identity function
 def id(z):
     return z
+
 
 # Function that given a pair <x,y> returns x + y
 def add(z):
     x, y = unpi(z)
     return x + y
 
+
 # Function that given a pair <x, y> returns x * y
 def mul(z):
     x, y = unpi(z)
     return x * y
+
 
 # Function that given a pair <x, y> returns max(0, x - y)
 def diff(z):
     x, y = unpi(z)
     return max(0, x - y)
 
+
 # Function that given a pair <x, y> returns the first element x
 def fst(z):
     x, _ = unpi(z)
     return x
+
 
 # Function that given a pair <x, y> returns the second element y
 def snd(z):
