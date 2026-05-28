@@ -1,4 +1,4 @@
-ANTLR = antlr4
+ANTLR = /usr/bin/antlr4
 
 all: cantorLexer.py cantorParser.py cantorVisitor.py
 
