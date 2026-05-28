@@ -4,7 +4,7 @@
 [![ANTLR 4.9](https://img.shields.io/badge/ANTLR-4.9-red.svg)](https://www.antlr.org/)
 [![License: Educational](https://img.shields.io/badge/license-educational-green.svg)](LICENSE)
 
-An interpreter for the **Cantor** language — a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat de Barcelona**.
+An interpreter for the **Cantor** language - a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat de Barcelona**.
 
 In Cantor, **all data is encoded as natural numbers**. Lists and tuples are represented via nested Cantor pairs, and the empty list is `0`. Programs define recursive functions using a small set of combinators inspired by Kleene's formalism of recursive functions.
 
@@ -12,13 +12,13 @@ In Cantor, **all data is encoded as natural numbers**. Lists and tuples are repr
 
 ## Features
 
-- **Tiny combinator-based language** — only 5 operation forms (`comp`, `pair`, `compair`, `mu`, `primrec`)
-- **Cantor pairing** — all data structures encoded as single natural numbers
-- **µ-recursion** — full expressive power of general recursive functions
-- **Import system** — compose programs by importing other `.cantor` files
-- **Documentation comments** — inline `[docs]` on function definitions
-- **Test runner** — automated black-box testing from `.inp` / `.out` files
-- **ANTLR-based parsing** — clean, maintainable grammar-driven frontend
+- **Tiny combinator-based language** - only 5 operation forms (`comp`, `pair`, `compair`, `mu`, `primrec`)
+- **Cantor pairing** - all data structures encoded as single natural numbers
+- **µ-recursion** - full expressive power of general recursive functions
+- **Import system** - compose programs by importing other `.cantor` files
+- **Documentation comments** - inline `[docs]` on function definitions
+- **Test runner** - automated black-box testing from `.inp` / `.out` files
+- **ANTLR-based parsing** - clean, maintainable grammar-driven frontend
 
 ---
 
@@ -66,9 +66,9 @@ make
 
 This runs `antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4`, generating:
 
-- `cantorLexer.py` — lexer
-- `cantorParser.py` — parser
-- `cantorVisitor.py` — AST visitor
+- `cantorLexer.py` - lexer
+- `cantorParser.py` - parser
+- `cantorVisitor.py` - AST visitor
 
 ---
 
@@ -110,7 +110,7 @@ A single number `x` is passed directly as `x`.
 
 ### Output
 
-The interpreter prints a single natural number — the result of applying the `main` function to the encoded input.
+The interpreter prints a single natural number - the result of applying the `main` function to the encoded input.
 
 ---
 
@@ -189,7 +189,7 @@ LEXICAL_ERROR : . ;
 | `compair f g h` | Compose with pair: `f(⟨g(x), h(x)⟩)` | `f ∘ ⟨g, h⟩` |
 | `mu f` | µ-recursion (minimalization): smallest `k` such that `f(⟨x, k⟩) ≠ 0` | `µk.f(⟨x, k⟩) ≠ 0` |
 | `primrec f g h` | Primitive recursion | `base = g(x)`, `step = h(⟨acc, x⟩)` |
-| `<name>` | Alias: single-function body | — |
+| `<name>` | Alias: single-function body | - |
 
 ### Built-in Functions
 
@@ -234,8 +234,8 @@ python3 run_tests.py
 
 This runs all test cases from the `tests/` directory. Each test consists of:
 
-- `.inp` file — space-separated input numbers
-- `.out` file — expected output (single natural number)
+- `.inp` file - space-separated input numbers
+- `.out` file - expected output (single natural number)
 - A matching `.cantor` script in `cantor/` named after the test prefix (e.g., `suma_1.inp` → `cantor/suma.cantor`)
 
 Example output:
@@ -308,11 +308,11 @@ Its inverse `π⁻¹(z) = (x, y)` reconstructs the original pair. By nesting `π
 1. The ANTLR-generated parser reads a `.cantor` file and produces an AST
 2. `process_file()` resolves `import` directives recursively and builds a mapping of function names to their AST nodes
 3. `EvalVisitor` evaluates the `main` function against the encoded input:
-   - **`comp f g`** — evaluates `g(x)`, passes result to `f`
-   - **`pair f g`** — evaluates `f(x)` and `g(x)`, encodes the pair via `π`
-   - **`compair f g h`** — evaluates `g(x)` and `h(x)`, pairs them, passes to `f`
-   - **`mu f`** — iterates `k = 0, 1, 2, ...` until `f(⟨x, k⟩) ≠ 0`
-   - **`primrec f g h`** — iterates from `1` to `x`, applying base/step logic
+   - **`comp f g`** - evaluates `g(x)`, passes result to `f`
+   - **`pair f g`** - evaluates `f(x)` and `g(x)`, encodes the pair via `π`
+   - **`compair f g h`** - evaluates `g(x)` and `h(x)`, pairs them, passes to `f`
+   - **`mu f`** - iterates `k = 0, 1, 2, ...` until `f(⟨x, k⟩) ≠ 0`
+   - **`primrec f g h`** - iterates from `1` to `x`, applying base/step logic
 
 ---
 
@@ -320,7 +320,7 @@ Its inverse `π⁻¹(z) = (x, y)` reconstructs the original pair. By nesting `π
 
 ### Why is everything encoded as numbers?
 
-Cantor is a pedagogical language designed to illustrate the **Church-Turing thesis** and the theory of **μ-recursive functions**. By encoding all data as natural numbers, it shows that integer arithmetic alone is sufficient for any computation — no native lists, booleans, or strings are needed.
+Cantor is a pedagogical language designed to illustrate the **Church-Turing thesis** and the theory of **μ-recursive functions**. By encoding all data as natural numbers, it shows that integer arithmetic alone is sufficient for any computation - no native lists, booleans, or strings are needed.
 
 ### What is µ-recursion (minimalization)?
 
@@ -332,7 +332,7 @@ The `extended` directive enables scripts that use `mu` (µ-recursion), which goe
 
 ### Can I use Cantor for real-world programming?
 
-No. Cantor is a **teaching language** — it's intentionally minimal to demonstrate fundamental concepts in computability theory. It is not designed for practical software development.
+No. Cantor is a **teaching language** - it's intentionally minimal to demonstrate fundamental concepts in computability theory. It is not designed for practical software development.
 
 ---
 
@@ -364,7 +364,7 @@ All tests must pass and new features should include corresponding test cases.
 
 ## Authors
 
-- **Cristian** — [kmore](https://github.com/kmore)
+- **Cristian** - [kmore](https://github.com/kmore)
 
 Built for the *Programming Languages* course (2025–2026) at **Universitat de Barcelona**.
 
