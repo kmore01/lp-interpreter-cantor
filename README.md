@@ -4,7 +4,7 @@
 [![ANTLR 4.9](https://img.shields.io/badge/ANTLR-4.9-red.svg)](https://www.antlr.org/)
 [![License: Educational](https://img.shields.io/badge/license-educational-green.svg)](LICENSE)
 
-An interpreter for the **Cantor** language - a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat de Barcelona**.
+An interpreter for the **Cantor** language - a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat Politècnica de Catalunya**.
 
 In Cantor, **all data is encoded as natural numbers**. Lists and tuples are represented via nested Cantor pairs, and the empty list is `0`. Programs define recursive functions using a small set of combinators inspired by Kleene's formalism of recursive functions.
 
@@ -77,22 +77,22 @@ This runs `antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4`, generatin
 Run any `.cantor` script by passing input through stdin:
 
 ```bash
-echo "3 5" | python3 cantor.py cantor/suma.cantor
+echo "3 5" | python3 cantor.py suma.cantor
 # Output: 8
 ```
 
 ```bash
-echo "5" | python3 cantor.py cantor/factorial.cantor
+echo "5" | python3 cantor.py factorial.cantor
 # Output: 120
 ```
 
 ```bash
-echo "7 2" | python3 cantor.py cantor/mod.cantor
+echo "7 2" | python3 cantor.py mod.cantor
 # Output: 1
 ```
 
 ```bash
-echo "10" | python3 cantor.py cantor/fibonacci.cantor
+echo "10" | python3 cantor.py fibonacci.cantor
 # Output: 55
 ```
 
@@ -316,57 +316,26 @@ Its inverse `π⁻¹(z) = (x, y)` reconstructs the original pair. By nesting `π
 
 ---
 
-## FAQ
-
-### Why is everything encoded as numbers?
-
-Cantor is a pedagogical language designed to illustrate the **Church-Turing thesis** and the theory of **μ-recursive functions**. By encoding all data as natural numbers, it shows that integer arithmetic alone is sufficient for any computation - no native lists, booleans, or strings are needed.
-
-### What is µ-recursion (minimalization)?
-
-The `mu` operator finds the smallest natural number `k` such that a given function returns a non-zero value. Combined with composition, pairing, and primitive recursion, this gives the full power of general recursive functions (equivalent to Turing machines).
-
-### Why do some scripts need `extended`?
-
-The `extended` directive enables scripts that use `mu` (µ-recursion), which goes beyond primitive recursion. Scripts marked `extended` can define functions like division, modulo, and the conditional that require unbounded search.
-
-### Can I use Cantor for real-world programming?
-
-No. Cantor is a **teaching language** - it's intentionally minimal to demonstrate fundamental concepts in computability theory. It is not designed for practical software development.
-
----
-
 ## Contributing
 
-This is an educational project for the Programming Languages course at Universitat de Barcelona. Contributions are welcome:
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please make sure to run the test suite before submitting:
-
-```bash
-python3 run_tests.py
-```
-
-All tests must pass and new features should include corresponding test cases.
+Please make sure to update tests as appropriate.
 
 ### Adding a new script
 
-1. Create your `.cantor` file in the `cantor/` directory
+1. Create your `.cantor` file in the main directory
 2. Define a `main` function via the `main` directive
-3. Add test cases in `tests/` with matching `<name>_<n>.inp` and `<name>_<n>.out` files
+3. Add test cases in the main directory
 
 ---
 
 ## Authors
 
-- **Cristian** - [kmore](https://github.com/kmore)
+- **Kevin** - [kmore](https://github.com/kmore)
 
-Built for the *Programming Languages* course (2025–2026) at **Universitat de Barcelona**.
+Built for the *Programming Languages* course (2025–2026) at **Universitat Politècnica de Catalunya**.
 
 ---
 
@@ -380,4 +349,3 @@ This project is for **educational purposes**. No license specified.
 
 - Inspired by Kleene's theory of **μ-recursive functions** and the formalism of **recursive function theory**
 - Built with [ANTLR](https://www.antlr.org/) parser generator
-- README structure inspired by [Make a README](https://www.makeareadme.com/)
