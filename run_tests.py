@@ -6,36 +6,30 @@ from functions import encode_input
 
 
 def main():
-    tests_dir = 'tests'
     ok = total = 0
     failed = []
 
-    for fname in sorted(os.listdir(tests_dir)):
+    for fname in sorted(os.listdir('.')):
         if not fname.endswith('.inp'):
             continue
 
         base = fname[:-4]
-        script_name = 'cantor/' + base.rsplit('_', 1)[0] + '.cantor'
-        inp_file = os.path.join(tests_dir, fname)
-        out_file = os.path.join(tests_dir, base + '.out')
+        script = base.rsplit('_', 1)[0] + '.cantor'
+        out_file = base + '.out'
 
         if not os.path.exists(out_file):
             continue
 
-        with open(inp_file) as f:
+        with open(fname) as f:
             inp = f.read().strip()
         with open(out_file) as f:
             expected = f.read().strip()
 
-        if os.path.exists(script_name):
-            script_path = script_name
-        else:
-            script_path = os.path.join(tests_dir, script_name)
-            if not os.path.exists(script_path):
-                continue
+        if not os.path.exists(script):
+            continue
 
         try:
-            fns, main_func = process_file(script_path)
+            fns, main_func = process_file(script)
             if main_func is None:
                 print(f'NO_MAIN {base}')
                 continue

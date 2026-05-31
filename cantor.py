@@ -1,6 +1,6 @@
 import sys
 import os
-from functions import *
+from functions import pi, unpi, encode_input, k_1, id, add, mul, diff, fst, snd
 
 from antlr4 import *
 from cantorLexer import cantorLexer
