@@ -17,7 +17,7 @@ In Cantor, **all data is encoded as natural numbers**. Lists and tuples are repr
 - **µ-recursion** - full expressive power of general recursive functions
 - **Import system** - compose programs by importing other `.cantor` files
 - **Documentation comments** - inline `[docs]` on function definitions
-- **Test runner** - automated black-box testing from `.inp` / `.out` files
+- **Manual testing** - each script can be tested via stdin pipes
 - **ANTLR-based parsing** - clean, maintainable grammar-driven frontend
 
 ---
@@ -226,30 +226,16 @@ These are ignored by the interpreter but serve as inline documentation.
 
 ---
 
-## Running Tests
+## Testing
+
+Test each script by redirecting the `.inp` file as input and comparing with the `.out` file:
 
 ```bash
-python3 run_tests.py
+python3 cantor.py suma.cantor < suma_1.inp > output.txt
+diff output.txt suma_1.out
 ```
 
-This runs all test cases from the `tests/` directory. Each test consists of:
-
-- `.inp` file - space-separated input numbers
-- `.out` file - expected output (single natural number)
-- A matching `.cantor` script in `cantor/` named after the test prefix (e.g., `suma_1.inp` → `cantor/suma.cantor`)
-
-Example output:
-
-```
-  OK  suma_1
-  OK  suma_2
-  OK  factorial_1
-  OK  fibonacci_1
-  OK  cond_2
-FAIL  div_1: got "3", expected "2"
-
-5/6 tests passed
-```
+No output from `diff` means the test passed.
 
 ---
 
@@ -263,30 +249,10 @@ FAIL  div_1: got "3", expected "2"
 ├── cantorParser.py        # Generated parser (from grammar)
 ├── cantorVisitor.py       # Generated visitor skeleton (from grammar)
 ├── Makefile               # ANTLR grammar compilation
-├── run_tests.py           # Automated test runner
 ├── .gitignore             # Git ignore rules
 ├── README.md              # This file
-├── cantor/                # Cantor language scripts
-│   ├── suma.cantor        #   Addition
-│   ├── factorial.cantor   #   Factorial
-│   ├── fibonacci.cantor   #   Fibonacci
-│   ├── mod.cantor         #   Modulo
-│   ├── div.cantor         #   Division
-│   ├── cond.cantor        #   Conditional
-│   ├── booleans.cantor    #   Boolean operations
-│   ├── relacionals.cantor #   Relational operators
-│   ├── signe.cantor       #   Sign function
-│   ├── anterior.cantor    #   Predecessor
-│   ├── even.cantor        #   Evenness test
-│   ├── add3.cantor        #   Three-number addition
-│   ├── max2.cantor        #   Max / min of two numbers
-│   └── maxMin.cantor      #   Max / min of three numbers
-└── tests/                 # Test inputs and expected outputs
-    ├── suma_1.inp
-    ├── suma_1.out
-    ├── factorial_1.inp
-    ├── factorial_1.out
-    └── ...
+├── *.cantor               # Cantor language scripts
+└── *.{inp,out}            # Test inputs (inp) and expected outputs (out)
 ```
 
 ---
