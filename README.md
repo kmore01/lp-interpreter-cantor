@@ -52,15 +52,13 @@ pip install antlr4-python3-runtime
 pip install antlr4-tools antlr4-python3-runtime
 ```
 
-> **Note:** The ANTLR tool requires a **Java runtime** (JRE 8+). Install it with `sudo apt install default-jre` on Debian-based systems or `brew install openjdk` on macOS.
-
 ---
 
 ## Setup
 
 ```bash
 git clone <repo-url>
-cd cantor
+cd lp-interpreter-cantor
 make
 ```
 
@@ -245,11 +243,7 @@ No output from `diff` means the test passed.
 ├── cantor.py              # Main interpreter (EvalVisitor, file processor, CLI)
 ├── functions.py           # Cantor pairing functions and built-in operations
 ├── cantor.g4              # ANTLR grammar definition
-├── cantorLexer.py         # Generated lexer (from grammar)
-├── cantorParser.py        # Generated parser (from grammar)
-├── cantorVisitor.py       # Generated visitor skeleton (from grammar)
 ├── Makefile               # ANTLR grammar compilation
-├── .gitignore             # Git ignore rules
 ├── README.md              # This file
 ├── *.cantor               # Cantor language scripts
 └── *.{inp,out}            # Test inputs (inp) and expected outputs (out)
@@ -299,7 +293,7 @@ Please make sure to update tests as appropriate.
 
 ## Authors
 
-- **Kevin** - [kmore](https://github.com/kmore)
+- **Kevin** - [kmore01](https://github.com/kmore01)
 
 Built for the *Programming Languages* course (2025–2026) at **Universitat Politècnica de Catalunya**.
 
@@ -313,5 +307,4 @@ This project is for **educational purposes**. No license specified.
 
 ## Acknowledgments
 
-- Inspired by Kleene's theory of **μ-recursive functions** and the formalism of **recursive function theory**
 - Built with [ANTLR](https://www.antlr.org/) parser generator
