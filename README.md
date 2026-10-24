@@ -1,141 +1,179 @@
-# Cantor Interpreter
+# Intérprete de Cantor
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![ANTLR 4.9](https://img.shields.io/badge/ANTLR-4.9-red.svg)](https://www.antlr.org/)
-[![License: Educational](https://img.shields.io/badge/license-educational-green.svg)](LICENSE)
+[![ANTLR 4.9.x](https://img.shields.io/badge/ANTLR-4.9.x-red.svg)](https://www.antlr.org/)
+[![License: Educational](https://img.shields.io/badge/license-educational-green.svg)](#licencia)
 
-An interpreter for the **Cantor** language - a minimal functional programming language based on **Cantor pairing functions** and **recursive function theory** (μ-recursive functions). Built for the *Programming Languages* course at **Universitat Politècnica de Catalunya**.
+Intérprete del lenguaje **Cantor**, un lenguaje funcional mínimo basado en las
+**funciones de emparejamiento de Cantor** y en la **teoría de funciones
+recursivas** (funciones mu-recursivas). Desarrollado para la asignatura de
+*Lenguajes de Programación* de la **Universitat Politècnica de Catalunya**.
 
-In Cantor, **all data is encoded as natural numbers**. Lists and tuples are represented via nested Cantor pairs, and the empty list is `0`. Programs define recursive functions using a small set of combinators inspired by Kleene's formalism of recursive functions.
-
----
-
-## Features
-
-- **Tiny combinator-based language** - only 5 operation forms (`comp`, `pair`, `compair`, `mu`, `primrec`)
-- **Cantor pairing** - all data structures encoded as single natural numbers
-- **µ-recursion** - full expressive power of general recursive functions
-- **Import system** - compose programs by importing other `.cantor` files
-- **Documentation comments** - inline `[docs]` on function definitions
-- **Manual testing** - each script can be tested via stdin pipes
-- **ANTLR-based parsing** - clean, maintainable grammar-driven frontend
+En Cantor **todos los datos se codifican como números naturales**. Las listas y
+las tuplas se representan mediante pares de Cantor anidados, y la lista vacía es
+`0`. Los programas definen funciones recursivas con un conjunto reducido de
+combinadores inspirados en el formalismo de Kleene.
 
 ---
 
-## Requirements
+## Características
 
-| Dependency | Version | Purpose |
+- **Lenguaje mínimo de combinadores**: solo cinco formas de operación (`comp`,
+  `pair`, `compair`, `mu`, `primrec`).
+- **Emparejamiento de Cantor**: todas las estructuras de datos se codifican en
+  un único número natural.
+- **Mu-recursión**: potencia expresiva completa de las funciones recursivas
+  generales.
+- **Sistema de importaciones**: composición de programas mediante ficheros
+  `.cantor`.
+- **Comentarios de documentación**: anotaciones `[docs]` en las definiciones.
+- **Suite de pruebas automática**: comparación de salidas esperadas.
+- **Frontend basado en ANTLR**: gramática declarativa y parser generado.
+
+---
+
+## Requisitos
+
+| Dependencia | Versión | Uso |
 |---|---|---|
-| Python | 3.10+ | Runtime |
-| ANTLR tool | 4.9.x | Grammar compilation (`antlr4`) |
-| antlr4-python3-runtime | matching 4.9.x | Python runtime library |
+| Python | 3.10+ | Ejecución |
+| antlr4-python3-runtime | 4.9.x | Runtime del parser (obligatorio) |
+| ANTLR tool | 4.9.x | Regenerar el parser (opcional) |
 
-### Installing ANTLR
+Los ficheros generados por ANTLR (`cantorLexer.py`, `cantorParser.py` y
+`cantorVisitor.py`) ya están incluidos en `src/`, así que para ejecutar el
+intérprete solo hace falta el runtime de Python.
+
+### Instalación del runtime
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install antlr4-python3-runtime==4.9.2
+```
+
+### Instalación de la herramienta ANTLR (opcional)
+
+Solo es necesaria si quieres regenerar el parser tras modificar la gramática.
 
 **Ubuntu / Debian:**
 
 ```bash
 sudo apt install antlr4
-pip install antlr4-python3-runtime
 ```
 
 **macOS (Homebrew):**
 
 ```bash
 brew install antlr
-pip install antlr4-python3-runtime
 ```
 
-**Other systems (via pip):**
+**Otros sistemas:**
 
 ```bash
-pip install antlr4-tools antlr4-python3-runtime
+pip install antlr4-tools
 ```
 
 ---
 
-## Setup
+## Puesta en marcha
 
 ```bash
 git clone <repo-url>
-cd lp-interpreter-cantor
+cd lp
+python3 -m venv .venv
+source .venv/bin/activate
+pip install antlr4-python3-runtime==4.9.2
+```
+
+Si cambias `src/cantor.g4`, regenera los ficheros del parser:
+
+```bash
 make
 ```
 
-This runs `antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4`, generating:
+Este comando ejecuta `antlr4 -Dlanguage=Python3 -no-listener -visitor
+cantor.g4` dentro de `src/`. Para eliminar los artefactos generados:
 
-- `cantorLexer.py` - lexer
-- `cantorParser.py` - parser
-- `cantorVisitor.py` - AST visitor
+```bash
+make clean
+```
 
 ---
 
-## Usage
+## Uso
 
-Run any `.cantor` script by passing input through stdin:
-
-```bash
-echo "3 5" | python3 cantor.py suma.cantor
-# Output: 8
-```
+Ejecuta cualquier programa `.cantor` pasando la entrada por `stdin`:
 
 ```bash
-echo "5" | python3 cantor.py factorial.cantor
-# Output: 120
+echo "3 5" | python3 src/cantor.py examples/suma.cantor
+# 8
 ```
 
 ```bash
-echo "7 2" | python3 cantor.py mod.cantor
-# Output: 1
+echo "5" | python3 src/cantor.py examples/factorial.cantor
+# 120
 ```
 
 ```bash
-echo "10" | python3 cantor.py fibonacci.cantor
-# Output: 55
+echo "7 2" | python3 src/cantor.py examples/mod.cantor
+# 1
 ```
 
-### Input Format
-
-Input numbers are space-separated on a single line. They are encoded as nested Cantor pairs from right to left:
-
-```
-a b c   →   π(a, π(b, c))
+```bash
+echo "10" | python3 src/cantor.py examples/fibonacci.cantor
+# 55
 ```
 
-Where `π(x, y) = ((x + y)(x + y + 1))/2 + y` is the Cantor pairing function.
+### Formato de entrada
 
-A single number `x` is passed directly as `x`.
+Los números se separan por espacios en una sola línea y se codifican como pares
+de Cantor anidados de derecha a izquierda:
 
-### Output
+```text
+a b c   ->   pi(a, pi(b, c))
+```
 
-The interpreter prints a single natural number - the result of applying the `main` function to the encoded input.
+donde `pi(x, y) = ((x + y)(x + y + 1)) / 2 + y` es la función de
+emparejamiento de Cantor.
+
+Un único número `x` se pasa directamente como `x`.
+
+### Salida
+
+El intérprete imprime un único número natural: el resultado de aplicar la
+función declarada como `main` a la entrada codificada.
 
 ---
 
-## Scripts
+## Programas de ejemplo
 
-| Script | Function | Input | Output |
+Todos los programas están en `examples/`:
+
+| Programa | Función | Entrada | Salida |
 |---|---|---|---|
-| `suma.cantor` | `x + y` | `x y` | sum |
-| `anterior.cantor` | `max(0, x - 1)` | `x` | predecessor |
-| `signe.cantor` | `0 if x = 0, 1 otherwise` | `x` | sign |
-| `booleans.cantor` | boolean operations (not, and, or) | `op x y` | result |
-| `relacionals.cantor` | relational operators (eq, lt, le, gt, ge) | `op x y` | 0 / 1 |
-| `add3.cantor` | `x + y + z` | `x y z` | sum |
+| `suma.cantor` | `x + y` | `x y` | suma |
+| `anterior.cantor` | `max(0, x - 1)` | `x` | predecesor |
+| `signe.cantor` | `0 si x = 0, 1 en caso contrario` | `x` | signo |
+| `booleans.cantor` | `not(x)` (también define `and` y `or`) | `x` | 0 / 1 |
+| `relacionals.cantor` | `neq(x, y)` (también define `eq`, `lt` y `gt`) | `x y` | 0 / 1 |
+| `add3.cantor` | `x + y + z` | `x y z` | suma |
 | `factorial.cantor` | `x!` | `x` | factorial |
-| `fibonacci.cantor` | `F(x)` | `x` | Fibonacci number |
-| `div.cantor` | `x // y` | `x y` | quotient |
-| `mod.cantor` | `x mod y` | `x y` | remainder |
-| `cond.cantor` | conditional `if p then a else b` | `p a b` | a or b |
-| `max2.cantor` | `max(x, y)` / `min(x, y)` | `x y` | max or min |
-| `maxMin.cantor` | `max` / `min` of three numbers | `x y z` | max or min |
-| `even.cantor` | `1 if x even, 0 otherwise` | `x` | evenness |
+| `fibonacci.cantor` | `F(x)` | `x` | número de Fibonacci |
+| `div.cantor` | `x // y` | `x y` | cociente |
+| `mod.cantor` | `x mod y` | `x y` | resto |
+| `cond.cantor` | condicional `if p then a else b` | `p a b` | `a` o `b` |
+| `max2.cantor` | `max(x, y)` / `min(x, y)` | `x y` | máximo o mínimo |
+| `maxMin.cantor` | `min(x, y)` (también define `max`) | `x y` | máximo o mínimo |
+| `even.cantor` | `1 si x es par, 0 en caso contrario` | `x` | paridad |
 
 ---
 
-## Language Reference
+## Referencia del lenguaje
 
-### Grammar
+### Gramática
+
+La fuente está en `src/cantor.g4`:
 
 ```antlr
 grammar cantor;
@@ -170,49 +208,49 @@ WS: [ \t]+ -> skip;
 LEXICAL_ERROR : . ;
 ```
 
-### Directives
+### Directivas
 
-| Directive | Description |
+| Directiva | Descripción |
 |---|---|
-| `main <name>` | Declares the entry-point function |
-| `import <name>` | Imports all functions from another `.cantor` file (resolved relative to current file) |
-| `extended` | Enables extended mode (needed for `relacionals.cantor`, `booleans.cantor`, `cond.cantor`, etc.) |
+| `main <nombre>` | Declara la función de entrada |
+| `import <nombre>` | Importa las funciones de otro fichero `.cantor` (se resuelve respecto al fichero actual) |
+| `extended` | Activa el modo extendido (necesario en `relacionals.cantor`, `booleans.cantor`, `cond.cantor`, etc.) |
 
-### Operations
+### Operaciones
 
-| Form | Meaning | Mathematical equivalent |
+| Forma | Significado | Equivalente matemático |
 |---|---|---|
-| `comp f g` | Composition: `f(g(x))` | `f ∘ g` |
-| `pair f g` | Pairing: `⟨f(x), g(x)⟩` | `⟨f, g⟩` |
-| `compair f g h` | Compose with pair: `f(⟨g(x), h(x)⟩)` | `f ∘ ⟨g, h⟩` |
-| `mu f` | µ-recursion (minimalization): smallest `k` such that `f(⟨x, k⟩) ≠ 0` | `µk.f(⟨x, k⟩) ≠ 0` |
-| `primrec f g h` | Primitive recursion | `base = g(x)`, `step = h(⟨acc, x⟩)` |
-| `<name>` | Alias: single-function body | - |
+| `comp f g` | Composición: `f(g(x))` | `f o g` |
+| `pair f g` | Emparejamiento: `⟨f(x), g(x)⟩` | `⟨f, g⟩` |
+| `compair f g h` | Composición con par: `f(⟨g(x), h(x)⟩)` | `f o ⟨g, h⟩` |
+| `mu f` | Mu-recursión (minimización): menor `k` tal que `f(⟨x, k⟩) ≠ 0` | `mu k. f(⟨x, k⟩) ≠ 0` |
+| `primrec f g h` | Recursión primitiva | `base = g(x)`, `paso = h(⟨acc, x⟩)` |
+| `<nombre>` | Alias de una función | - |
 
-### Built-in Functions
+### Funciones predefinidas
 
-| Name | Signature | Description |
+| Nombre | Firma | Descripción |
 |---|---|---|
-| `k_1` | `k_1(x) = 1` | Constant 1 |
-| `id` | `id(x) = x` | Identity |
-| `add` | `add(⟨x, y⟩) = x + y` | Addition |
-| `mul` | `mul(⟨x, y⟩) = x * y` | Multiplication |
-| `diff` | `diff(⟨x, y⟩) = max(0, x - y)` | Truncated difference |
-| `fst` | `fst(⟨x, y⟩) = x` | First projection |
-| `snd` | `snd(⟨x, y⟩) = y` | Second projection |
+| `k_1` | `k_1(x) = 1` | Constante 1 |
+| `id` | `id(x) = x` | Identidad |
+| `add` | `add(⟨x, y⟩) = x + y` | Suma |
+| `mul` | `mul(⟨x, y⟩) = x * y` | Multiplicación |
+| `diff` | `diff(⟨x, y⟩) = max(0, x - y)` | Diferencia truncada |
+| `fst` | `fst(⟨x, y⟩) = x` | Primera proyección |
+| `snd` | `snd(⟨x, y⟩) = y` | Segunda proyección |
 
-### Primitive Recursion Semantics
+### Semántica de la recursión primitiva
 
-The `primrec f g h` operation works as follows:
+La operación `primrec f g h` funciona así:
 
-1. If `f(i) ≠ 0` (base case): result = `g(i)`
-2. If `f(i) = 0` (recursive case): result = `h(⟨accumulator, i⟩)`
+1. Si `f(i) ≠ 0` (caso base): resultado = `g(i)`.
+2. Si `f(i) = 0` (caso recursivo): resultado = `h(⟨acumulador, i⟩)`.
 
-The accumulator is the result from the previous step (`i - 1`), starting with `g(0)`.
+El acumulador es el resultado del paso anterior (`i - 1`) y comienza en `g(0)`.
 
-### Documentation Comments
+### Comentarios de documentación
 
-Function definitions can include documentation comments in square brackets:
+Las definiciones pueden incluir documentación entre corchetes:
 
 ```cantor
 define factorial
@@ -220,91 +258,122 @@ define factorial
     primrec is_base k_1 step
 ```
 
-These are ignored by the interpreter but serve as inline documentation.
+El intérprete los ignora; sirven como documentación en línea.
 
 ---
 
-## Testing
+## Pruebas
 
-Test each script by redirecting the `.inp` file as input and comparing with the `.out` file:
+La suite incluye 51 casos en `tests/`. Cada entrada `<nombre>_<n>.inp` se
+ejecuta contra `examples/<nombre>.cantor` y se compara con
+`tests/<nombre>_<n>.out`:
 
 ```bash
-python3 cantor.py suma.cantor < suma_1.inp > output.txt
-diff output.txt suma_1.out
+python3 run_tests.py
 ```
 
-No output from `diff` means the test passed.
+Salida esperada:
+
+```text
+  OK  add3_1
+  ...
+51/51 tests passed
+```
+
+También puedes ejecutar un caso manualmente:
+
+```bash
+python3 src/cantor.py examples/suma.cantor < tests/suma_1.inp
+diff <(python3 src/cantor.py examples/suma.cantor < tests/suma_1.inp) tests/suma_1.out
+```
 
 ---
 
-## Project Structure
+## Estructura del proyecto
 
+```text
+.
+├── README.md              # Documentación
+├── Makefile               # Regeneración del parser ANTLR
+├── run_tests.py           # Runner de la suite de pruebas
+├── .gitignore
+├── src/
+│   ├── cantor.py          # Intérprete (EvalVisitor, procesado de ficheros, CLI)
+│   ├── functions.py       # Emparejamiento de Cantor y operaciones predefinidas
+│   ├── cantor.g4          # Gramática ANTLR
+│   ├── cantorLexer.py     # Lexer generado
+│   ├── cantorParser.py    # Parser generado
+│   └── cantorVisitor.py   # Visitor generado
+├── examples/
+│   └── *.cantor           # Programas de ejemplo
+└── tests/
+    ├── *.inp              # Entradas de prueba
+    └── *.out              # Salidas esperadas
 ```
-├── cantor.py              # Main interpreter (EvalVisitor, file processor, CLI)
-├── functions.py           # Cantor pairing functions and built-in operations
-├── cantor.g4              # ANTLR grammar definition
-├── Makefile               # ANTLR grammar compilation
-├── README.md              # This file
-├── *.cantor               # Cantor language scripts
-└── *.{inp,out}            # Test inputs (inp) and expected outputs (out)
-```
+
+Todos los `.cantor` deben permanecer en el mismo directorio porque las
+directivas `import` se resuelven respecto al fichero que las contiene.
 
 ---
 
-## How It Works
+## Cómo funciona
 
-### Cantor Pairing Function
+### Función de emparejamiento de Cantor
 
-The Cantor pairing function `π : ℕ × ℕ → ℕ` is a bijection that encodes any pair of natural numbers as a single natural number:
+La función `pi : N × N -> N` es una biyección que codifica cualquier par de
+números naturales como un único número natural:
 
+```text
+pi(x, y) = ((x + y)(x + y + 1)) / 2 + y
 ```
-π(x, y) = ((x + y)(x + y + 1)) / 2 + y
-```
 
-Its inverse `π⁻¹(z) = (x, y)` reconstructs the original pair. By nesting `π`, any tuple `(a₁, a₂, ..., aₙ)` can be encoded as a single number: `π(a₁, π(a₂, ... π(aₙ₋₁, aₙ)...))`.
+Su inversa `pi^-1(z) = (x, y)` reconstruye el par original. Anidando `pi`,
+cualquier tupla `(a_1, a_2, ..., a_n)` se codifica como un solo número:
+`pi(a_1, pi(a_2, ... pi(a_n-1, a_n)...))`.
 
-### Evaluation Model
+### Modelo de evaluación
 
-1. The ANTLR-generated parser reads a `.cantor` file and produces an AST
-2. `process_file()` resolves `import` directives recursively and builds a mapping of function names to their AST nodes
-3. `EvalVisitor` evaluates the `main` function against the encoded input:
-   - **`comp f g`** - evaluates `g(x)`, passes result to `f`
-   - **`pair f g`** - evaluates `f(x)` and `g(x)`, encodes the pair via `π`
-   - **`compair f g h`** - evaluates `g(x)` and `h(x)`, pairs them, passes to `f`
-   - **`mu f`** - iterates `k = 0, 1, 2, ...` until `f(⟨x, k⟩) ≠ 0`
-   - **`primrec f g h`** - iterates from `1` to `x`, applying base/step logic
+1. El parser generado por ANTLR lee un fichero `.cantor` y construye el AST.
+2. `process_file()` resuelve las directivas `import` de forma recursiva y crea
+   un mapa de nombres de función a nodos del AST.
+3. `EvalVisitor` evalúa la función `main` sobre la entrada codificada:
+   - **`comp f g`**: evalúa `g(x)` y pasa el resultado a `f`.
+   - **`pair f g`**: evalúa `f(x)` y `g(x)`, y codifica el par con `pi`.
+   - **`compair f g h`**: evalúa `g(x)` y `h(x)`, los empareja y pasa el par a `f`.
+   - **`mu f`**: itera `k = 0, 1, 2, ...` hasta que `f(⟨x, k⟩) ≠ 0`.
+   - **`primrec f g h`**: itera de `1` a `x` aplicando la lógica base/paso.
 
 ---
 
-## Contributing
+## Contribuir
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
+Las contribuciones son bienvenidas. Para cambios importantes, abre antes un
+issue para discutir el enfoque.
 
-Please make sure to update tests as appropriate.
+### Añadir un programa
 
-### Adding a new script
-
-1. Create your `.cantor` file in the main directory
-2. Define a `main` function via the `main` directive
-3. Add test cases in the main directory
+1. Crea el fichero `.cantor` en `examples/`.
+2. Declara la función de entrada con la directiva `main`.
+3. Añade los casos de prueba en `tests/` con el formato `<nombre>_<n>.inp` y
+   `<nombre>_<n>.out`.
 
 ---
 
-## Authors
+## Autores
 
 - **Kevin** - [kmore01](https://github.com/kmore01)
 
-Built for the *Programming Languages* course (2025–2026) at **Universitat Politècnica de Catalunya**.
+Proyecto desarrollado para la asignatura de *Lenguajes de Programación*
+(2025–2026) en la **Universitat Politècnica de Catalunya**.
 
 ---
 
-## License
+## Licencia
 
-This project is for **educational purposes**. No license specified.
+Proyecto con fines **educativos**. No se especifica una licencia.
 
 ---
 
-## Acknowledgments
+## Agradecimientos
 
-- Built with [ANTLR](https://www.antlr.org/) parser generator
+- Construido con [ANTLR](https://www.antlr.org/).

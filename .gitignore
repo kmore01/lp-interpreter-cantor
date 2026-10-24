@@ -7,4 +7,4 @@ lib64
 pyvenv.cfg
 *.interp
 *.tokens
-output.txt  
+output.txt

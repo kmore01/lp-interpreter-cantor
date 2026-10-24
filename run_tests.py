@@ -1,26 +1,33 @@
 import os
 import sys
 
+ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(ROOT, 'src'))
+
 from cantor import EvalVisitor, process_file
 from functions import encode_input
+
+TESTS_DIR = os.path.join(ROOT, 'tests')
+EXAMPLES_DIR = os.path.join(ROOT, 'examples')
 
 
 def main():
     ok = total = 0
     failed = []
 
-    for fname in sorted(os.listdir('.')):
+    for fname in sorted(os.listdir(TESTS_DIR)):
         if not fname.endswith('.inp'):
             continue
 
         base = fname[:-4]
-        script = base.rsplit('_', 1)[0] + '.cantor'
-        out_file = base + '.out'
+        script = os.path.join(EXAMPLES_DIR, base.rsplit('_', 1)[0] + '.cantor')
+        out_file = os.path.join(TESTS_DIR, base + '.out')
+        inp_file = os.path.join(TESTS_DIR, fname)
 
         if not os.path.exists(out_file):
             continue
 
-        with open(fname) as f:
+        with open(inp_file) as f:
             inp = f.read().strip()
         with open(out_file) as f:
             expected = f.read().strip()

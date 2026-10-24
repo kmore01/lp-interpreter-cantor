@@ -1,7 +1,7 @@
-all: gramatica
+all: grammar
 
-gramatica: cantor.g4
-	antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4
+grammar: src/cantor.g4
+	cd src && antlr4 -Dlanguage=Python3 -no-listener -visitor cantor.g4
 
 clean:
-	rm -f cantorLexer.py cantorParser.py cantorVisitor.py cantorListener.py *.interp *.tokens
+	rm -f src/cantorLexer.py src/cantorParser.py src/cantorVisitor.py src/cantorListener.py src/*.interp src/*.tokens
